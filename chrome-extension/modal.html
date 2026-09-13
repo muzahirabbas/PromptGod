@@ -3,13 +3,26 @@
 <head>
     <title>PromptGod</title>
     <link rel="stylesheet" type="text/css" href="modal.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="promptgod-overlay">
-        <div id="promptgod-modal">
-            <button id="promptgod-close">&times;</button>
-            <div id="promptgod-modal-content">
+        <div id="promptgod-modal" tabindex="0">
+            <div class="promptgod-header">
+                <div class="promptgod-title">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    <span>PromptGod</span>
                 </div>
+                <button id="promptgod-close" aria-label="Close modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div id="promptgod-modal-content">
+                <!-- Content injected via JS -->
+            </div>
+            <div class="promptgod-footer">
+                <kbd>Esc</kbd> to cancel
+            </div>
         </div>
     </div>
     <script src="modal.js"></script>

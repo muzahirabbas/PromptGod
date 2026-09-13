@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Cloudflare & Build artifacts
+.wrangler/
+dist/
+
+# Keys & Secrets
+key.json
+*.pem
+.env
+.env.*

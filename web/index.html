@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptGod — Autonomous AI Prompt Engineering Chrome Extension</title>
+    <meta name="description" content="Supercharge, enhance, and stream precision AI prompts in real-time across any web application with autonomous multi-agent reasoning.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="PromptGod — Autonomous AI Prompt Engineering Extension">
+    <meta property="og:description" content="Multi-agent prompt enhancement with real-time SSE streaming, Firestore caching, and bulletproof React DOM insertion.">
+    <meta property="og:type" content="website">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-base: #08090D;
+            --bg-card: rgba(18, 20, 29, 0.75);
+            --bg-card-hover: rgba(28, 31, 46, 0.85);
+            
+            /* Signature Palette: Yellow, White, Red */
+            --brand-yellow: #FFE500;
+            --brand-yellow-glow: rgba(255, 229, 0, 0.35);
+            --brand-yellow-subtle: rgba(255, 229, 0, 0.12);
+            
+            --brand-red: #FF2A54;
+            --brand-red-dark: #D61239;
+            --brand-red-glow: rgba(255, 42, 84, 0.4);
+            --brand-red-subtle: rgba(255, 42, 84, 0.12);
+            
+            --text-white: #FFFFFF;
+            --text-muted: #94A3B8;
+            --text-dim: #64748B;
+            
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --border-highlight: rgba(255, 229, 0, 0.3);
+            
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-white);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(255, 42, 84, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 25%, rgba(255, 229, 0, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 80%, rgba(255, 42, 84, 0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 229, 0, 0.4);
+            box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.5), 0 0 24px -6px var(--brand-yellow-glow);
+            transform: translateY(-3px);
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(8, 9, 13, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 16px 0;
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 22px;
+            text-decoration: none;
+            color: var(--text-white);
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--brand-yellow) 0%, var(--brand-red) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 16px var(--brand-yellow-glow);
+            color: #08090D;
+            font-weight: 800;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--brand-yellow);
+        }
+
+        .nav-cta-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--brand-yellow) 0%, #FFC800 100%);
+            color: #08090D;
+            box-shadow: 0 4px 18px var(--brand-yellow-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(255, 229, 0, 0.5);
+            background: #FFE500;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-white);
+            border: 1px solid var(--border-glass);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .btn-red {
+            background: linear-gradient(135deg, var(--brand-red) 0%, var(--brand-red-dark) 100%);
+            color: #FFFFFF;
+            box-shadow: 0 4px 18px var(--brand-red-glow);
+        }
+
+        .btn-red:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(255, 42, 84, 0.6);
+        }
+
+        .hero {
+            padding: 100px 0 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--brand-red-subtle);
+            border: 1px solid rgba(255, 42, 84, 0.3);
+            color: #FF6B8B;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--brand-red);
+            box-shadow: 0 0 8px var(--brand-red);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.6; }
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(40px, 6.5vw, 76px);
+            font-weight: 800;
+            line-height: 1.08;
+            letter-spacing: -1.8px;
+            max-width: 960px;
+            margin: 0 auto 24px;
+        }
+
+        .hero h1 span.highlight-yellow {
+            color: var(--brand-yellow);
+            text-shadow: 0 0 35px var(--brand-yellow-glow);
+        }
+
+        .hero h1 span.highlight-red {
+            color: var(--brand-red);
+            text-shadow: 0 0 35px var(--brand-red-glow);
+        }
+
+        .hero p {
+            font-size: clamp(16px, 2vw, 20px);
+            color: var(--text-muted);
+            max-width: 720px;
+            margin: 0 auto 36px;
+            font-weight: 400;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+
+        .hero-actions .btn {
+            padding: 14px 28px;
+            font-size: 16px;
+        }
+
+        .hotkey-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: -12px;
+            margin-bottom: 60px;
+        }
+
+        kbd {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 3px 8px;
+            border-radius: 6px;
+            color: var(--brand-yellow);
+            font-family: var(--font-code);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .simulator-wrap {
+            max-width: 900px;
+            margin: 0 auto 120px;
+            position: relative;
+        }
+
+        .simulator-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            height: 80%;
+            background: radial-gradient(circle, var(--brand-red-glow) 0%, var(--brand-yellow-glow) 50%, transparent 70%);
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .simulator-card {
+            background: #0E1118;
+            border: 1px solid rgba(255, 229, 0, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 30px -10px var(--brand-yellow-glow);
+        }
+
+        .sim-header {
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sim-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sim-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .sim-dot.red { background: #FF5F56; }
+        .sim-dot.yellow { background: #FFBD2E; }
+        .sim-dot.green { background: #27C93F; }
+
+        .sim-title {
+            font-family: var(--font-code);
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sim-body {
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sim-body { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+
+        .sim-col-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sim-textarea {
+            width: 100%;
+            height: 160px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 14px;
+            color: var(--text-white);
+            font-family: var(--font-code);
+            font-size: 13px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+        }
+
+        .sim-textarea:focus {
+            border-color: var(--brand-yellow);
+        }
+
+        .sim-enhanced-box .sim-textarea {
+            background: rgba(255, 42, 84, 0.05);
+            border-color: rgba(255, 42, 84, 0.25);
+            color: #FFE6EE;
+        }
+
+        .sim-toolbar {
+            margin-top: 16px;
+            padding: 0 24px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .sim-features-tag {
+            display: flex;
+            gap: 8px;
+        }
+
+        .feature-chip {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 8px;
+            background: rgba(255, 229, 0, 0.1);
+            color: var(--brand-yellow);
+            border: 1px solid rgba(255, 229, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .feature-chip.active, .feature-chip:hover {
+            background: var(--brand-yellow);
+            color: #08090D;
+        }
+
+        .section-title-wrap {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .section-badge {
+            color: var(--brand-yellow);
+            font-family: var(--font-code);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(30px, 4vw, 46px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        .section-desc {
+            color: var(--text-muted);
+            font-size: 17px;
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 120px;
+        }
+
+        .agent-card {
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--brand-yellow), var(--brand-red));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .agent-card:hover::before {
+            opacity: 1;
+        }
+
+        .agent-num {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.06);
+            position: absolute;
+            top: 20px;
+            right: 24px;
+        }
+
+        .agent-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .agent-1 .agent-icon {
+            background: rgba(255, 229, 0, 0.15);
+            color: var(--brand-yellow);
+            border: 1px solid rgba(255, 229, 0, 0.3);
+        }
+
+        .agent-2 .agent-icon {
+            background: rgba(255, 42, 84, 0.15);
+            color: var(--brand-red);
+            border: 1px solid rgba(255, 42, 84, 0.3);
+        }
+
+        .agent-3 .agent-icon {
+            background: linear-gradient(135deg, rgba(255, 229, 0, 0.2), rgba(255, 42, 84, 0.2));
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .agent-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-family: var(--font-display);
+        }
+
+        .agent-card p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .agent-feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .agent-feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .agent-feature-list li svg {
+            color: var(--brand-yellow);
+            flex-shrink: 0;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 120px;
+        }
+
+        @media (max-width: 960px) {
+            .bento-grid { grid-template-columns: 1fr; }
+        }
+
+        .bento-col-2 {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 960px) {
+            .bento-col-2 { grid-column: span 1; }
+        }
+
+        .bento-card {
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .bento-card h4 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-family: var(--font-display);
+        }
+
+        .bento-card p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .model-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .model-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: var(--font-code);
+            font-size: 12px;
+            color: #CBD5E1;
+            transition: all 0.2s ease;
+        }
+
+        .model-pill:hover {
+            border-color: var(--brand-red);
+            color: #FFFFFF;
+            background: rgba(255, 42, 84, 0.1);
+        }
+
+        .provider-tag {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--brand-yellow);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .install-box {
+            background: linear-gradient(135deg, rgba(255, 42, 84, 0.15) 0%, rgba(255, 229, 0, 0.1) 100%);
+            border: 1px solid rgba(255, 229, 0, 0.3);
+            border-radius: 24px;
+            padding: 48px;
+            text-align: center;
+            margin-bottom: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .install-box h2 {
+            font-family: var(--font-display);
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .install-box p {
+            color: var(--text-muted);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+
+        .code-snippet {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-family: var(--font-code);
+            font-size: 14px;
+            color: var(--brand-yellow);
+            margin-bottom: 32px;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        footer {
+            border-top: 1px solid var(--border-glass);
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        footer a:hover {
+            color: var(--brand-yellow);
+        }
+
+        .footer-heart {
+            color: var(--brand-red);
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <a href="#" class="logo">
+                <div class="logo-icon">⚡</div>
+                <span>PromptGod</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#architecture">3-Tier Agents</a></li>
+                <li><a href="#demo">Live Demo</a></li>
+                <li><a href="#models">Models</a></li>
+            </ul>
+            <div class="nav-cta-group">
+                <a href="https://github.com/muzahirabbas/PromptGod" target="_blank" class="btn btn-secondary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    GitHub
+                </a>
+                <a href="#install" class="btn btn-primary">
+                    Install Extension
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero container">
+        <div class="badge">
+            <span class="badge-dot"></span>
+            <span>v2.0 • Autonomous Multi-Agent Chrome Extension</span>
+        </div>
+        <h1>
+            Prompt Like a <span class="highlight-yellow">God</span>.<br>
+            Powered by <span class="highlight-red">3-Tier AI Agents</span>.
+        </h1>
+        <p>
+            Transform casual inputs into breathtaking, production-grade prompts in real-time. Built for WhatsApp Web, ChatGPT, Midjourney, Claude, and any generative AI app.
+        </p>
+        <div class="hero-actions">
+            <a href="#demo" class="btn btn-primary">Try Interactive Simulator</a>
+            <a href="https://github.com/muzahirabbas/PromptGod" target="_blank" class="btn btn-red">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Get Extension on GitHub
+            </a>
+        </div>
+        <div class="hotkey-tag">
+            <span>Global Hotkey:</span>
+            <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>
+            <span>(Mac: <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>)</span>
+        </div>
+    </header>
+
+    <section id="demo" class="container simulator-wrap">
+        <div class="simulator-glow"></div>
+        <div class="simulator-card">
+            <div class="sim-header">
+                <div class="sim-dots">
+                    <div class="sim-dot red"></div>
+                    <div class="sim-dot yellow"></div>
+                    <div class="sim-dot green"></div>
+                </div>
+                <div class="sim-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    PromptGod Live Interactive Playground
+                </div>
+                <div>
+                    <span style="font-size: 11px; font-weight: 700; color: var(--brand-yellow); background: rgba(255,229,0,0.1); padding: 4px 8px; border-radius: 6px;">SSE STREAM READY</span>
+                </div>
+            </div>
+
+            <div class="sim-body">
+                <div>
+                    <div class="sim-col-title">
+                        <span>Original Draft Prompt</span>
+                        <span style="color: var(--text-dim); font-size: 11px;">Editable</span>
+                    </div>
+                    <textarea id="demo-input" class="sim-textarea" placeholder="Type your prompt here...">generate gothic metaverse city with horror gothic characters</textarea>
+                </div>
+                <div class="sim-enhanced-box">
+                    <div class="sim-col-title">
+                        <span style="color: var(--brand-red);">⚡ Enhanced Output Stream</span>
+                        <span id="demo-status" style="color: var(--brand-yellow); font-size: 11px;">Ready</span>
+                    </div>
+                    <textarea id="demo-output" class="sim-textarea" readonly placeholder="Click 'Enhance with PromptGod' below to watch the stream..."></textarea>
+                </div>
+            </div>
+
+            <div class="sim-toolbar">
+                <div class="sim-features-tag">
+                    <button class="feature-chip active" onclick="selectPreset('image')">🎨 Image Generation</button>
+                    <button class="feature-chip" onclick="selectPreset('code')">💻 Code Generation</button>
+                    <button class="feature-chip" onclick="selectPreset('copy')">✍️ Copywriting</button>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button id="btn-copy-sim" class="btn btn-secondary" onclick="copySimText()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        Copy
+                    </button>
+                    <button id="btn-enhance-sim" class="btn btn-primary" onclick="simulateStream()">
+                        ⚡ Enhance with PromptGod
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="architecture" class="container">
+        <div class="section-title-wrap">
+            <span class="section-badge">The Technology</span>
+            <h2 class="section-title">Autonomous 3-Tier Agentic Architecture</h2>
+            <p class="section-desc">PromptGod does not use static templates. Three coordinated AI agents analyze, architect, and stream prompts in real-time.</p>
+        </div>
+
+        <div class="agent-grid">
+            <div class="glass-card agent-card agent-1">
+                <span class="agent-num">01</span>
+                <div class="agent-icon">🌐</div>
+                <h3>Agent 1: Site Feature Discovery</h3>
+                <p>Scans the host web page DOM to discover all generative AI functions (e.g. Midjourney style prompts, Code assistants, Video generators) and saves a site map.</p>
+                <ul class="agent-feature-list">
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Automatic Domain Feature Profiling
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Firestore REST Global Map Caching
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Zero Latency on subsequent visits
+                    </li>
+                </ul>
+            </div>
+
+            <div class="glass-card agent-card agent-2">
+                <span class="agent-num">02</span>
+                <div class="agent-icon">🧠</div>
+                <h3>Agent 2: Meta-Prompt Architect</h3>
+                <p>Synthesizes a master system instruction explicitly tailored to the active platform and selected generative mode, locking in negative constraints and stylistic taxonomy.</p>
+                <ul class="agent-feature-list">
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Domain-specific prompt engineering rules
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Strict Anti-Reasoning / Zero-CoT output
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Cached per site + function pair
+                    </li>
+                </ul>
+            </div>
+
+            <div class="glass-card agent-card agent-3">
+                <span class="agent-num">03</span>
+                <div class="agent-icon">⚡</div>
+                <h3>Agent 3: Real-Time SSE Enhancer</h3>
+                <p>Executes the final enhancement using Server-Sent Events (SSE), streaming words token-by-token directly into the UI with one-click direct React DOM injection.</p>
+                <ul class="agent-feature-list">
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Sub-100ms first token latency
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Live review, Copy & Regenerate
+                    </li>
+                    <li>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Native React & Lexical insertion
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="container">
+        <div class="section-title-wrap">
+            <span class="section-badge">Built for Scale</span>
+            <h2 class="section-title">Engineered to be Indestructible</h2>
+            <p class="section-desc">Designed to work seamlessly on heavy modern web applications without breakage.</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="glass-card bento-card bento-col-2">
+                <div>
+                    <span class="provider-tag">Bulletproof Architecture</span>
+                    <h4>Direct React & Lexical Insertion</h4>
+                    <p>
+                        Most extensions fail on apps like WhatsApp Web, ChatGPT, or Discord because setting <code>element.textContent</code> destroys the editor's virtual DOM. PromptGod uses native <code>InputEvent</code> dispatching combined with <code>document.execCommand('insertText')</code> to preserve undo trees and reactive state.
+                    </p>
+                </div>
+                <div style="margin-top: 24px; padding: 14px; background: rgba(0,0,0,0.4); border-radius: 10px; font-family: var(--font-code); font-size: 13px; color: #4ADE80;">
+                    ✓ Zero DOM breakage • Preserves Undo/Redo • 100% React, Vue & Lexical compatible
+                </div>
+            </div>
+
+            <div class="glass-card bento-card">
+                <div>
+                    <span class="provider-tag">Security & Isolation</span>
+                    <h4>Isolated Shadow DOM</h4>
+                    <p>
+                        PromptGod renders its glassmorphic modal inside a completely isolated Shadow Root. Zero CSS leakage into or out of the host page.
+                    </p>
+                </div>
+                <div style="margin-top: 24px; font-family: var(--font-code); font-size: 13px; color: var(--brand-yellow);">
+                    #promptgod-shadow-host { all: initial; }
+                </div>
+            </div>
+
+            <div class="glass-card bento-card">
+                <div>
+                    <span class="provider-tag">Dual-Tier Caching</span>
+                    <h4>Firestore + Local Storage</h4>
+                    <p>
+                        Global crowd-sourced site maps and meta-prompts stored in Google Firestore REST API with client-side Chrome storage caching.
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card bento-card bento-col-2" id="models">
+                <div>
+                    <span class="provider-tag">Multi-Provider Freedom</span>
+                    <h4>Use Your Favorite Models & Free Tiers</h4>
+                    <p>
+                        Connect Google AI Studio, OpenRouter, or Groq with one API key. Supports ultra-fast free tiers and custom models.
+                    </p>
+                    <div class="model-pills">
+                        <span class="model-pill" style="border-color: rgba(255,229,0,0.4); color: var(--brand-yellow);">gemma-4-31b-it</span>
+                        <span class="model-pill">gemini-2.5-flash-lite</span>
+                        <span class="model-pill">gemini-3.5-flash-lite</span>
+                        <span class="model-pill" style="border-color: rgba(255,42,84,0.4); color: var(--brand-red);">llama-3.3-70b-versatile</span>
+                        <span class="model-pill">openai/gpt-oss-120b</span>
+                        <span class="model-pill">groq/compound</span>
+                        <span class="model-pill">nvidia/nemotron-3-super-120b:free</span>
+                        <span class="model-pill">Custom Models...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="install" class="container">
+        <div class="install-box">
+            <h2>Ready to Prompt Like a God?</h2>
+            <p>Get the Chrome Extension directly from GitHub and install it in less than 60 seconds.</p>
+            
+            <div class="code-snippet">
+                <span>$ git clone https://github.com/muzahirabbas/PromptGod.git</span>
+            </div>
+            
+            <div>
+                <a href="https://github.com/muzahirabbas/PromptGod" target="_blank" class="btn btn-primary" style="padding: 16px 36px; font-size: 17px;">
+                    View on GitHub & Install
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p style="margin-bottom: 8px;">
+                <strong>PromptGod</strong> — Built with <span class="footer-heart">❤</span> for prompt engineers and creative thinkers.
+            </p>
+            <p>
+                <a href="https://github.com/muzahirabbas/PromptGod" target="_blank">GitHub Repository</a> • 
+                <a href="https://github.com/muzahirabbas/PromptGod/blob/main/README.md" target="_blank">Documentation</a> • 
+                <a href="https://github.com/muzahirabbas" target="_blank">@muzahirabbas</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const PRESETS = {
+            image: {
+                draft: "generate gothic metaverse city with horror gothic characters",
+                enhanced: "A sprawling gothic metaverse metropolis under a perpetual blood-moon eclipse. Towering obsidian spires adorned with weeping stone gargoyles and neon-red cybernetic veins. Phantom-like gothic denizens walk the reflective rain-slicked asphalt wearing Victorian cyberpunk attire with glowing optic implants. Volumetric crimson fog, macro wide-angle cinematic composition, hyper-detailed photorealistic digital render, Unreal Engine 5 aesthetic, 8k resolution, octane lighting."
+            },
+            code: {
+                draft: "write python script for web scraping images",
+                enhanced: "Write an asynchronous, production-grade Python script using aiohttp and BeautifulSoup to scrape high-resolution images from a target URL. Implement rate-limiting via asyncio.Semaphore, custom User-Agent rotation, automatic directory creation, MIME-type validation, and comprehensive error handling for HTTP 429/500 statuses with exponential backoff."
+            },
+            copy: {
+                draft: "write cold email for b2b ai software sales",
+                enhanced: "Subject: Quick question regarding {{company}}'s customer support latency\n\nHi {{firstName}},\n\nI noticed {{company}} recently expanded its product line into Europe—huge congrats on the momentum.\n\nScaling support across multiple time zones usually causes response lag. We built an autonomous AI tier that resolves 68% of Tier-1 tickets in under 3 seconds without adding headcount.\n\nOpen to seeing a 90-second benchmark comparison for your tech stack this Thursday?"
+            }
+        };
+
+        let currentPreset = 'image';
+
+        function selectPreset(type) {
+            currentPreset = type;
+            document.querySelectorAll('.feature-chip').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('demo-input').value = PRESETS[type].draft;
+            document.getElementById('demo-output').value = '';
+            document.getElementById('demo-status').textContent = 'Ready';
+            document.getElementById('demo-status').style.color = 'var(--brand-yellow)';
+        }
+
+        function simulateStream() {
+            const outputArea = document.getElementById('demo-output');
+            const statusTag = document.getElementById('demo-status');
+            const enhanceBtn = document.getElementById('btn-enhance-sim');
+            
+            outputArea.value = '';
+            statusTag.textContent = 'Streaming SSE...';
+            statusTag.style.color = 'var(--brand-red)';
+            enhanceBtn.disabled = true;
+            enhanceBtn.style.opacity = '0.6';
+
+            const fullText = PRESETS[currentPreset].enhanced;
+            const words = fullText.split(' ');
+            let i = 0;
+
+            const timer = setInterval(() => {
+                if (i < words.length) {
+                    outputArea.value += (i === 0 ? '' : ' ') + words[i];
+                    outputArea.scrollTop = outputArea.scrollHeight;
+                    i++;
+                } else {
+                    clearInterval(timer);
+                    statusTag.textContent = 'Stream Complete';
+                    statusTag.style.color = '#4ADE80';
+                    enhanceBtn.disabled = false;
+                    enhanceBtn.style.opacity = '1';
+                }
+            }, 35);
+        }
+
+        function copySimText() {
+            const text = document.getElementById('demo-output').value;
+            if (!text) {
+                alert('Click "Enhance with PromptGod" first to generate the prompt!');
+                return;
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('btn-copy-sim');
+                const prev = btn.innerHTML;
+                btn.innerHTML = '✓ Copied!';
+                btn.style.color = '#4ADE80';
+                setTimeout(() => {
+                    btn.innerHTML = prev;
+                    btn.style.color = '';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

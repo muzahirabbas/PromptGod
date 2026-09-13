@@ -1,94 +1,196 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PromptGod Options</title>
+    <title>PromptGod Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-color: #0F172A;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            color: #F8FAFC;
         }
+
         .container {
-            width: 400px;
-            padding: 30px;
-            background-color: #1e1e1e;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            border: 1px solid #333;
+            width: 420px;
+            padding: 36px;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
         }
+
         h1 {
-            text-align: center;
-            color: #fff;
-            margin-bottom: 25px;
+            margin: 0 0 6px 0;
+            font-size: 24px;
             font-weight: 600;
+            color: #F8FAFC;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+
+        .subtitle {
+            margin: 0 0 24px 0;
+            font-size: 14px;
+            color: #94A3B8;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
             font-size: 14px;
-            color: #aaa;
+            font-weight: 500;
+            color: #CBD5E1;
         }
+
         input, select {
             width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #444;
-            background-color: #2a2a2a;
-            color: #e0e0e0;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.05);
+            color: #F8FAFC;
             font-size: 14px;
+            font-family: inherit;
             box-sizing: border-box;
+            transition: all 0.2s ease;
         }
+
         input:focus, select:focus {
             outline: none;
-            border-color: #8e44ad;
+            border-color: #2563EB;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
         }
+
+        input::placeholder {
+            color: #64748B;
+        }
+        
+        select option {
+            background-color: #0F172A;
+            color: #F8FAFC;
+        }
+
+        .help-text {
+            margin: 6px 0 0 0;
+            font-size: 12px;
+            color: #94A3B8;
+            line-height: 1.4;
+        }
+
+        .help-text a {
+            color: #60A5FA;
+            text-decoration: none;
+        }
+
+        .help-text a:hover {
+            text-decoration: underline;
+        }
+
         button {
             width: 100%;
-            padding: 12px;
-            background-color: #8e44ad;
+            padding: 14px;
+            background-color: #2563EB;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: background-color 0.2s;
+            font-size: 15px;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-top: 10px;
         }
+
         button:hover {
-            background-color: #9b59b6;
+            background-color: #3B82F6;
         }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+
         #status {
-            margin-top: 15px;
+            margin-top: 16px;
             text-align: center;
-            color: #2ecc71;
+            font-size: 14px;
             font-weight: 500;
-            height: 20px;
+            min-height: 20px;
+            transition: opacity 0.3s;
+            opacity: 0;
+        }
+        
+        #status.show {
+            opacity: 1;
+        }
+
+        #status.success {
+            color: #4ADE80;
+        }
+        
+        #status.error {
+            color: #F87171;
+        }
+
+        .icon {
+            color: #3B82F6;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>PromptGod Settings</h1>
+        <h1>
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            PromptGod Settings
+        </h1>
+        <p class="subtitle">AI Provider & Model Preferences</p>
+        
         <div class="form-group">
-            <label for="apiKey">Google Gemini API Key</label>
-            <input type="password" id="apiKey" placeholder="Enter your API key">
-        </div>
-        <div class="form-group">
-            <label for="model">Gemini Model</label>
-            <select id="model">
-                <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
-                <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+            <label for="provider">AI Provider</label>
+            <select id="provider">
+                <option value="openrouter">OpenRouter (Free Gemma 27B & 9B)</option>
+                <option value="groq">Groq (Ultra-Fast Free Gemma 9B & Llama 3)</option>
+                <option value="google">Google AI Studio (Gemini 1.5 & 2.0 Flash)</option>
             </select>
         </div>
+
+        <div class="form-group">
+            <label for="apiKey" id="keyLabel">AI Provider API Key</label>
+            <input type="password" id="apiKey" placeholder="sk-or-v1-...">
+            <p class="help-text" id="keyHelp">
+                Get a free key at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a>
+            </p>
+        </div>
+        
+        <div class="form-group">
+            <label for="model">AI Model</label>
+            <select id="model">
+                <!-- Dynamically populated -->
+            </select>
+        </div>
+        
+        <div class="form-group" id="customModelGroup" style="display: none;">
+            <label for="customModel">Custom Model ID</label>
+            <input type="text" id="customModel" placeholder="e.g. meta-llama/llama-3-8b-instruct">
+        </div>
+        
         <button id="save">Save Settings</button>
         <div id="status"></div>
     </div>
